@@ -22,13 +22,11 @@ class JoinApiController(
     //Autowired
     //private lateinit var joinService:JoinService
 
-
     @PostMapping(path = [""])
     fun join(
         @RequestBody
         join: Join
     ): ResponseEntity<Any?>{
-        println(join.id)
         return ResponseEntity.ok().body(joinService.save(join))
     }
     @GetMapping(path = [""])

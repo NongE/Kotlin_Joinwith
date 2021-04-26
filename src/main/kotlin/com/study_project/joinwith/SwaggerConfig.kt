@@ -29,7 +29,7 @@ class SwaggerConfig {
         return ApiInfoBuilder()
             .title("api") // 제목
             .version("1.0") // 버전
-            .description("Spring Boot와 Swagger를 활용한 API 문서") // 요약
+            .description("Spring Boot를 활용한 회원가입 API 문서") // 요약
             .build()
     }
 
