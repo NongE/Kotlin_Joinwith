@@ -13,15 +13,18 @@ data class Join(
 
     var pw: String? = null,
 
-    var user_name: String? = null,
+    @Column(name = "user_name")
+    var userName: String? = null,
 
     // 메일 검증 필요
-    var e_mail: String? = null,
+    @Column(name = "e_mail")
+    var eMail: String? = null,
 
     var address: String? = null,
 
     // 번호 검증 필요
-    var phone_number: String? = null,
+    @Column(name = "phone_number")
+    var phoneNumber: String? = null,
 
     // 날짜 검증 필요
     var birth: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"))
