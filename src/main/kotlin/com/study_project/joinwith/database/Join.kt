@@ -1,4 +1,4 @@
-package com.study_project.joinwith.model
+package com.study_project.joinwith.database
 
 
 import java.time.LocalDateTime
@@ -9,7 +9,10 @@ import javax.persistence.*
 @Table(name="user")
 data class Join(
     @Id
-    var id: String? = null,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id:Long? = null,
+
+    var user_id: String? = null,
 
     var pw: String? = null,
 

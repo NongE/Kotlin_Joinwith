@@ -1,10 +1,8 @@
 package com.study_project.joinwith.controller.api.join
 
-import com.study_project.joinwith.model.Join
-import com.study_project.joinwith.repository.JoinwithRepository
+import com.study_project.joinwith.database.Join
 import com.study_project.joinwith.service.JoinService
 import io.swagger.annotations.ApiOperation
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
