@@ -1,8 +1,11 @@
 package com.study_project.joinwith.controller.api.join
 
 import com.study_project.joinwith.database.Join
+import com.study_project.joinwith.model.JoinRequest
+import com.study_project.joinwith.model.OverlapCheckRequest
 import com.study_project.joinwith.service.JoinService
 import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiParam
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -10,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(path = ["/api/join"])
 class JoinApiController(
-    var joinService:JoinService
+    var joinService: JoinService,
 ) {
 
     // 기본적으로 주입을 하기 위해서는 주입하기 위한 객체가 bean으로 등록되어 있어야함
@@ -31,17 +34,18 @@ class JoinApiController(
     @PostMapping(path = [""])
     @ApiOperation(value = "회원가입 API", notes = "사용자의 정보를 전달받아 이를 DB에 저장하는 API")
     fun join(
-        @RequestBody join: Join
-    ): ResponseEntity<Any?>{
-        return ResponseEntity.ok().body(joinService.save(join))
+         @RequestBody joinRequest: JoinRequest,
+    ): ResponseEntity<Any?> {
+        return ResponseEntity.ok().body(joinService.save(joinRequest))
     }
 
-    @PostMapping(path = ["/id_overlap"])
-    @ApiOperation(value = "ID 중복 검사 API", notes = "사용자가 사용하려는 아이디가 현재 DB에 있는지 중복 검사하는 API, false = 사용 가능한 ID, true = 중복된 ID")
-    fun idOverlap(
-        @RequestParam id:String
-    ): Boolean {
-        return joinService.idOverlap(id)
+    @PostMapping(path = ["/overlapCheck"])
+    @ApiOperation(value = "ID 중복 검사 API",
+        notes = "사용자가 사용하려는 아이디가 현재 DB에 있는지 중복 검사하는 API // false = 사용 가능한 ID, true = 중복된 ID")
+    fun overlapCheck(
+        @ApiParam(value = "사용하고자 하는 ID", example = "helloWorld") @RequestParam userId:String
+    ): ResponseEntity<Boolean> {
+        return ResponseEntity.ok().body(joinService.overlapCheck(userId))
     }
 
 }

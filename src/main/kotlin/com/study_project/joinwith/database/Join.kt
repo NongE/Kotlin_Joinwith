@@ -1,34 +1,41 @@
 package com.study_project.joinwith.database
 
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import com.study_project.joinwith.model.JoinRequest
 import javax.persistence.*
 
 @Entity
-@Table(name="user")
+@Table(name = "user")
 data class Join(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id:Long? = null,
+    var id: Long? = null,
 
-    var user_id: String? = null,
+    var userId: String? = null,
 
     var pw: String? = null,
 
     @Column(name = "user_name")
     var userName: String? = null,
 
-    // 메일 검증 필요
-    @Column(name = "e_mail")
-    var eMail: String? = null,
+    var email: String? = null,
 
     var address: String? = null,
 
-    // 번호 검증 필요
     @Column(name = "phone_number")
     var phoneNumber: String? = null,
 
-    // 날짜 검증 필요
-    var birth: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"))
-) {}
+    var birth: String? = null,
+)
+
+fun Join.convertJoin(joinRequest: JoinRequest): Join {
+    return Join().apply {
+        this.userId = joinRequest.user_id
+        this.pw = joinRequest.pw
+        this.userName = joinRequest.userName
+        this.email = joinRequest.email
+        this.address = joinRequest.address
+        this.phoneNumber = joinRequest.phoneNumber
+        this.birth = joinRequest.birth
+    }
+}
