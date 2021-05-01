@@ -1,6 +1,7 @@
 package com.study_project.joinwith.controller.api.join
 
 import com.study_project.joinwith.database.Join
+import com.study_project.joinwith.model.ChangePasswordRequest
 import com.study_project.joinwith.model.JoinRequest
 import com.study_project.joinwith.model.OverlapCheckRequest
 import com.study_project.joinwith.service.JoinService
@@ -39,13 +40,22 @@ class JoinApiController(
         return ResponseEntity.ok().body(joinService.save(joinRequest))
     }
 
-    @PostMapping(path = ["/overlapCheck"])
+    @PostMapping(path = ["/overlap_check"])
     @ApiOperation(value = "ID 중복 검사 API",
         notes = "사용자가 사용하려는 아이디가 현재 DB에 있는지 중복 검사하는 API // false = 사용 가능한 ID, true = 중복된 ID")
     fun overlapCheck(
         @ApiParam(value = "사용하고자 하는 ID", example = "helloWorld") @RequestParam userId:String
     ): ResponseEntity<Boolean> {
         return ResponseEntity.ok().body(joinService.overlapCheck(userId))
+    }
+
+    @PostMapping(path = ["/change_password"])
+    @ApiOperation(value = "사용자 비밀번호 변경 API",
+        notes = "사용자의 비밀번호를 변경하는 API")
+    fun changePassword(
+        @RequestBody changePasswordRequest: ChangePasswordRequest
+    ){
+        println(joinService.changePassword(changePasswordRequest))
     }
 
 }

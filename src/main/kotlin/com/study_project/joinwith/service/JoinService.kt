@@ -2,23 +2,22 @@ package com.study_project.joinwith.service
 
 import com.study_project.joinwith.database.Join
 import com.study_project.joinwith.database.convertJoin
+import com.study_project.joinwith.model.ChangePasswordRequest
 import com.study_project.joinwith.model.JoinRequest
-import com.study_project.joinwith.model.OverlapCheckDto
-import com.study_project.joinwith.model.OverlapCheckRequest
 import com.study_project.joinwith.repository.JoinwithRepository
 import org.springframework.stereotype.Service
 
 @Service
 class JoinService(
-    val joinwithRepository: JoinwithRepository
+    val joinwithRepository: JoinwithRepository,
 ) {
 
     fun find(): MutableIterable<Join> {
         return joinwithRepository.findAll()
     }
 
-    fun save(joinRequest: JoinRequest){
-        joinRequest.let{
+    fun save(joinRequest: JoinRequest) {
+        joinRequest.let {
             Join().convertJoin(it)
         }.let {
             joinwithRepository.save(it)
@@ -27,6 +26,16 @@ class JoinService(
 
     fun overlapCheck(userId: String): Boolean {
         return joinwithRepository.findJoinByUserId(userId).isNotEmpty()
+    }
 
+
+    fun changePassword(changePasswordRequest: ChangePasswordRequest) {
+        val validateUser = joinwithRepository.findJoinByUserIdAndPw(changePasswordRequest.userId, changePasswordRequest.presentPassword)
+        if (validateUser.isNotEmpty()){
+            joinwithRepository.findById(validateUser[0].getId().toLong()).ifPresent {
+                it.pw = changePasswordRequest.changedPassword
+                joinwithRepository.save(it)
+            }
+        }
     }
 }
