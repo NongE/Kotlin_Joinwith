@@ -29,17 +29,22 @@ class JoinService(
         }
     }
 
-    fun validateUser(validateUserRequest: ValidateUserRequest){
-        print(joinwithRepository.findJoinByUserIdAndPw(validateUserRequest.userId, validateUserRequest.pw)[0].getId())
+    fun validateUser(validateUserRequest: ValidateUserRequest): Boolean {
+        val validateResult = joinwithRepository.findJoinByUserIdAndPw(validateUserRequest.userId, validateUserRequest.pw)
+        return validateResult.isNotEmpty()
     }
 
-    fun changePassword(changePasswordRequest: ChangePasswordRequest) {
+    fun changePassword(changePasswordRequest: ChangePasswordRequest): Boolean {
         val validateUser = joinwithRepository.findJoinByUserIdAndPw(changePasswordRequest.userId, changePasswordRequest.presentPassword)
-        if (validateUser.isNotEmpty()){
+        return if (validateUser.isNotEmpty()){
             joinwithRepository.findById(validateUser[0].getId().toLong()).ifPresent {
                 it.pw = changePasswordRequest.changedPassword
                 joinwithRepository.save(it)
+
             }
+            true
+        } else{
+            false
         }
     }
 }

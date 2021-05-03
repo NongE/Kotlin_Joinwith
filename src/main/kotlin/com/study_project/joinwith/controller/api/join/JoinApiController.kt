@@ -53,20 +53,20 @@ class JoinApiController(
 
     @PostMapping(path = ["/validate_user"])
     @ApiOperation(value = "사용자 검증 API",
-        notes = "아이디와 비밀번호를 활용하여 현재 사용자가 유효한 사용자인지 검증하는 API")
+        notes = "아이디와 비밀번호를 활용하여 현재 사용자가 유효한 사용자인지 검증하는 API // false = 검증 실패, true = 검증 완료")
     fun validateUser(
         @RequestBody validateUserRequest: ValidateUserRequest
-    ){
-        println(joinService.validateUser(validateUserRequest))
+    ): Boolean {
+        return joinService.validateUser(validateUserRequest)
     }
 
     @PostMapping(path = ["/change_password"])
     @ApiOperation(value = "사용자 비밀번호 변경 API",
-        notes = "사용자의 비밀번호를 변경하는 API")
+        notes = "사용자의 비밀번호를 변경하는 API // false = 변경 실패, true = 변경 성공")
     fun changePassword(
         @RequestBody changePasswordRequest: ChangePasswordRequest
-    ){
-        println(joinService.changePassword(changePasswordRequest))
+    ): Boolean {
+        return joinService.changePassword(changePasswordRequest)
     }
 
 }
