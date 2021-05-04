@@ -60,13 +60,22 @@ class JoinApiController(
         return joinService.validateUser(validateUserRequest)
     }
 
-    @PostMapping(path = ["/change_password"])
+    @PatchMapping(path = ["/change_password"])
     @ApiOperation(value = "사용자 비밀번호 변경 API",
         notes = "사용자의 비밀번호를 변경하는 API // false = 변경 실패, true = 변경 성공")
     fun changePassword(
         @RequestBody changePasswordRequest: ChangePasswordRequest
     ): Boolean {
         return joinService.changePassword(changePasswordRequest)
+    }
+
+    @DeleteMapping(path = ["/change_password"])
+    @ApiOperation(value = "사용자 삭제 API",
+        notes = "사용자를 삭제하는 API // false = 삭제 실패, true = 삭제 성공")
+    fun deleteUser(
+        @RequestBody validateUserRequest: ValidateUserRequest
+    ): Boolean {
+        return joinService.deleteUser(validateUserRequest)
     }
 
 }

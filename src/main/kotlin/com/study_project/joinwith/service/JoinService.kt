@@ -40,11 +40,21 @@ class JoinService(
             joinwithRepository.findById(validateUser[0].getId().toLong()).ifPresent {
                 it.pw = changePasswordRequest.changedPassword
                 joinwithRepository.save(it)
-
             }
             true
         } else{
             false
         }
+    }
+
+    fun deleteUser(validateUserRequest: ValidateUserRequest): Boolean {
+        val validateResult = joinwithRepository.findJoinByUserIdAndPw(validateUserRequest.userId, validateUserRequest.pw)
+        return if (validateResult.isNotEmpty()){
+            joinwithRepository.deleteById(validateResult[0].getId().toLong())
+            true
+        }else{
+            false
+        }
+
     }
 }
