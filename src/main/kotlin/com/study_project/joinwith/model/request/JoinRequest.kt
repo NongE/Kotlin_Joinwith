@@ -1,4 +1,4 @@
-package com.study_project.joinwith.model
+package com.study_project.joinwith.model.request
 
 data class JoinRequest(
     var user_id: String? = null,

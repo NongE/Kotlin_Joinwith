@@ -1,4 +1,4 @@
-package com.study_project.joinwith.model
+package com.study_project.joinwith.model.dto
 
 
 interface OverlapCheckDto {

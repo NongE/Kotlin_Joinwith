@@ -1,10 +1,9 @@
 package com.study_project.joinwith.controller.api.join
 
 import com.study_project.joinwith.database.Join
-import com.study_project.joinwith.model.ChangePasswordRequest
-import com.study_project.joinwith.model.JoinRequest
-import com.study_project.joinwith.model.OverlapCheckRequest
-import com.study_project.joinwith.model.ValidateUserRequest
+import com.study_project.joinwith.model.request.ChangePasswordRequest
+import com.study_project.joinwith.model.request.JoinRequest
+import com.study_project.joinwith.model.request.ValidateUserRequest
 import com.study_project.joinwith.service.JoinService
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
@@ -45,7 +44,7 @@ class JoinApiController(
     @PostMapping(path = [""])
     @ApiOperation(value = "회원가입 API", notes = "사용자의 정보를 전달받아 이를 DB에 저장하는 API")
     fun join(
-         @RequestBody joinRequest: JoinRequest,
+        @RequestBody joinRequest: JoinRequest,
     ): ResponseEntity<Any?> {
         println(joinRequest)
         return ResponseEntity.ok().body(joinService.save(joinRequest))
@@ -74,8 +73,8 @@ class JoinApiController(
         notes = "사용자를 삭제하는 API // false = 삭제 실패, true = 삭제 성공")
     fun deleteUser(
         @RequestBody validateUserRequest: ValidateUserRequest
-    ): Boolean {
-        return joinService.deleteUser(validateUserRequest)
+    ) {
+        joinService.deleteUser(validateUserRequest)
     }
 
 }

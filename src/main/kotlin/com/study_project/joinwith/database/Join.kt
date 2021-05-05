@@ -1,7 +1,7 @@
 package com.study_project.joinwith.database
 
 
-import com.study_project.joinwith.model.JoinRequest
+import com.study_project.joinwith.model.request.JoinRequest
 import javax.persistence.*
 
 @Entity

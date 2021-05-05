@@ -2,11 +2,12 @@ package com.study_project.joinwith.service
 
 import com.study_project.joinwith.database.Join
 import com.study_project.joinwith.database.convertJoin
-import com.study_project.joinwith.model.ChangePasswordRequest
-import com.study_project.joinwith.model.JoinRequest
-import com.study_project.joinwith.model.ValidateUserRequest
+import com.study_project.joinwith.model.request.ChangePasswordRequest
+import com.study_project.joinwith.model.request.JoinRequest
+import com.study_project.joinwith.model.request.ValidateUserRequest
 import com.study_project.joinwith.repository.JoinwithRepository
 import org.springframework.stereotype.Service
+import org.springframework.validation.annotation.Validated
 
 @Service
 class JoinService(
@@ -47,14 +48,8 @@ class JoinService(
         }
     }
 
-    fun deleteUser(validateUserRequest: ValidateUserRequest): Boolean {
+    fun deleteUser(validateUserRequest: ValidateUserRequest) {
         val validateResult = joinwithRepository.findJoinByUserIdAndPw(validateUserRequest.userId, validateUserRequest.pw)
-        return if (validateResult.isNotEmpty()){
-            joinwithRepository.deleteById(validateResult[0].getId().toLong())
-            true
-        }else{
-            false
-        }
-
+        joinwithRepository.deleteById(validateResult[0].getId().toLong())
     }
 }
