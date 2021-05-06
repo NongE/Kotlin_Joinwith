@@ -4,11 +4,15 @@ import com.study_project.joinwith.database.Join
 import com.study_project.joinwith.model.request.ChangePasswordRequest
 import com.study_project.joinwith.model.request.JoinRequest
 import com.study_project.joinwith.model.request.ValidateUserRequest
+import com.study_project.joinwith.model.response.ErrorResponse
+import com.study_project.joinwith.model.response.ValidateUserResponse
 import com.study_project.joinwith.service.JoinService
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import javax.servlet.http.HttpServletRequest
 
 
 @RestController
@@ -28,7 +32,6 @@ class JoinApiController(
     @GetMapping(path = [""])
     @ApiOperation(value = "전체 회원 목록을 불러오는 API", notes = "임시로 회원 목록을 확인하기 위해 전체 회원 목록을 불러오는 API")
     fun find(): MutableIterable<Join> {
-        println(joinService.find())
         return joinService.find()
     }
 
@@ -37,26 +40,42 @@ class JoinApiController(
         notes = "사용자가 사용하려는 아이디가 현재 DB에 있는지 중복 검사하는 API // false = 사용 가능한 ID, true = 중복된 ID")
     fun overlapCheck(
         @ApiParam(value = "사용하고자 하는 ID", example = "helloWorld") @RequestParam userId:String
-    ): ResponseEntity<Boolean> {
-        return ResponseEntity.ok().body(joinService.overlapCheck(userId))
+    ){
+        joinService.overlapCheck(userId)
     }
 
     @PostMapping(path = [""])
     @ApiOperation(value = "회원가입 API", notes = "사용자의 정보를 전달받아 이를 DB에 저장하는 API")
     fun join(
         @RequestBody joinRequest: JoinRequest,
-    ): ResponseEntity<Any?> {
-        println(joinRequest)
-        return ResponseEntity.ok().body(joinService.save(joinRequest))
+    ) {
+        joinService.save(joinRequest)
     }
 
     @PostMapping(path = ["/validate_user"])
     @ApiOperation(value = "사용자 검증 API",
         notes = "아이디와 비밀번호를 활용하여 현재 사용자가 유효한 사용자인지 검증하는 API // false = 검증 실패, true = 검증 완료")
     fun validateUser(
-        @RequestBody validateUserRequest: ValidateUserRequest
-    ): Boolean {
-        return joinService.validateUser(validateUserRequest)
+        @RequestBody validateUserRequest: ValidateUserRequest,
+        request: HttpServletRequest
+    ): ResponseEntity<ValidateUserResponse> {
+        if (joinService.validateUser(validateUserRequest)){
+            ValidateUserResponse().apply {
+                this.path = request.requestURI.toString()
+                this.resultCode = "Success"
+                this.httpStatus = HttpStatus.OK.toString()
+                this.message = "아이디, 비밀번호 검증 완료"
+                return ResponseEntity.status(HttpStatus.OK).body(this)
+            }
+        }else{
+            ValidateUserResponse().apply {
+                this.path = request.requestURI.toString()
+                this.resultCode = "Fail"
+                this.httpStatus = HttpStatus.BAD_REQUEST.toString()
+                this.message = "아이디, 비밀번호 검증 실패"
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(this)
+            }
+        }
     }
 
     @PatchMapping(path = ["/change_password"])
@@ -68,9 +87,9 @@ class JoinApiController(
         return joinService.changePassword(changePasswordRequest)
     }
 
-    @DeleteMapping(path = ["/change_password"])
+    @DeleteMapping(path = ["/delete_password"])
     @ApiOperation(value = "사용자 삭제 API",
-        notes = "사용자를 삭제하는 API // false = 삭제 실패, true = 삭제 성공")
+        notes = "사용자를 삭제하는 API")
     fun deleteUser(
         @RequestBody validateUserRequest: ValidateUserRequest
     ) {
