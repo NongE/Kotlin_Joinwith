@@ -5,6 +5,7 @@ import com.study_project.joinwith.model.request.ChangePasswordRequest
 import com.study_project.joinwith.model.request.JoinRequest
 import com.study_project.joinwith.model.request.ValidateUserRequest
 import com.study_project.joinwith.model.response.ErrorResponse
+import com.study_project.joinwith.model.response.OverlapCheckResponse
 import com.study_project.joinwith.model.response.ValidateUserResponse
 import com.study_project.joinwith.service.JoinService
 import io.swagger.annotations.ApiOperation
@@ -39,9 +40,29 @@ class JoinApiController(
     @ApiOperation(value = "ID 중복 검사 API",
         notes = "사용자가 사용하려는 아이디가 현재 DB에 있는지 중복 검사하는 API // false = 사용 가능한 ID, true = 중복된 ID")
     fun overlapCheck(
-        @ApiParam(value = "사용하고자 하는 ID", example = "helloWorld") @RequestParam userId:String
-    ){
-        joinService.overlapCheck(userId)
+        @ApiParam(value = "사용하고자 하는 ID", example = "helloWorld")
+        @RequestParam userId:String,
+        request: HttpServletRequest
+    ): ResponseEntity<OverlapCheckResponse> {
+        println(joinService.overlapCheck(userId))
+        if (joinService.overlapCheck(userId)){
+            OverlapCheckResponse().apply {
+                this.path = request.requestURI.toString()
+                this.resultCode = "Success"
+                this.httpStatus = HttpStatus.OK.toString()
+                this.message = "${userId}는 사용할 수 없는 아이디입니다."
+                return ResponseEntity.status(HttpStatus.OK).body(this)
+            }
+        }else{
+            OverlapCheckResponse().apply {
+                this.path = request.requestURI.toString()
+                this.resultCode = "Success"
+                this.httpStatus = HttpStatus.BAD_REQUEST.toString()
+                this.message = "${userId}는 사용 가능한 아이디입니다."
+                return ResponseEntity.status(HttpStatus.OK).body(this)
+            }
+        }
+
     }
 
     @PostMapping(path = [""])

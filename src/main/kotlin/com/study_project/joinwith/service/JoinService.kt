@@ -48,8 +48,9 @@ class JoinService(
         }
     }
 
-    fun deleteUser(validateUserRequest: ValidateUserRequest) {
+    fun deleteUser(validateUserRequest: ValidateUserRequest): Boolean {
         val validateResult = joinwithRepository.findJoinByUserIdAndPw(validateUserRequest.userId, validateUserRequest.pw)
         joinwithRepository.deleteById(validateResult[0].getId().toLong())
+        return true
     }
 }
