@@ -1,4 +1,4 @@
-package com.study_project.joinwith
+package com.study_project.joinwith.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

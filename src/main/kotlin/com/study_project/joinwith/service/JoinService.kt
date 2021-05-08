@@ -22,11 +22,12 @@ class JoinService(
         return joinwithRepository.findJoinByUserId(userId).isNotEmpty()
     }
 
-    fun save(joinRequest: JoinRequest) {
+    fun save(joinRequest: JoinRequest): Boolean {
         joinRequest.let {
             Join().convertJoin(it)
         }.let {
             joinwithRepository.save(it)
+            return true
         }
     }
 

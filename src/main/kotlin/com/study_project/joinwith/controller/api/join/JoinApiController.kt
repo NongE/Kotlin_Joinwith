@@ -69,8 +69,9 @@ class JoinApiController(
     @ApiOperation(value = "회원가입 API", notes = "사용자의 정보를 전달받아 이를 DB에 저장하는 API")
     fun join(
         @RequestBody joinRequest: JoinRequest,
-    ) {
-        joinService.save(joinRequest)
+    ): Boolean {
+        return joinService.save(joinRequest)
+
     }
 
     @PostMapping(path = ["/validate_user"])
