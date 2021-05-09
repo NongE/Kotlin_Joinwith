@@ -6,12 +6,14 @@ import com.study_project.joinwith.model.request.ChangePasswordRequest
 import com.study_project.joinwith.model.request.JoinRequest
 import com.study_project.joinwith.model.request.ValidateUserRequest
 import com.study_project.joinwith.repository.JoinwithRepository
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
 
 @Service
 class JoinService(
     val joinwithRepository: JoinwithRepository,
+    val passwordEncoder:PasswordEncoder
 ) {
 
     fun find(): MutableIterable<Join> {
@@ -24,6 +26,7 @@ class JoinService(
 
     fun save(joinRequest: JoinRequest): Boolean {
         joinRequest.let {
+            it.pw = passwordEncoder.encode(it.pw)
             Join().convertJoin(it)
         }.let {
             joinwithRepository.save(it)
