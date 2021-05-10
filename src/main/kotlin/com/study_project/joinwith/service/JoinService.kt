@@ -35,8 +35,12 @@ class JoinService(
     }
 
     fun validateUser(validateUserRequest: ValidateUserRequest): Boolean {
-        val validateResult = joinwithRepository.findJoinByUserIdAndPw(validateUserRequest.userId, validateUserRequest.pw)
-        return validateResult.isNotEmpty()
+        val validateResult = joinwithRepository.findJoinByUserId(validateUserRequest.userId)
+        return if (validateResult.isNotEmpty()){
+            passwordEncoder.matches(validateUserRequest.pw, validateResult[0].getPw())
+        }else{
+            false
+        }
     }
 
     fun changePassword(changePasswordRequest: ChangePasswordRequest): Boolean {
