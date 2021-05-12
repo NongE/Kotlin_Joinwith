@@ -47,24 +47,32 @@ class JoinService(
 
     fun changePassword(changePasswordRequest: ChangePasswordRequest): Boolean {
         var passwordChangeFlag: Boolean = false
-        joinwithRepository.findJoinByUserIdAndPw(changePasswordRequest.userId, changePasswordRequest.presentPassword)
-            .ifPresent {
+        joinwithRepository.findJoinByUserId(changePasswordRequest.userId).ifPresent {
+            val isValidateUser = ValidateUserRequest(changePasswordRequest.userId, changePasswordRequest.presentPassword)
+            if (validateUser(isValidateUser)){
                 joinwithRepository.findById(it.getId().toLong()).ifPresent { userInfo ->
-                    userInfo.pw = changePasswordRequest.changedPassword
+                    userInfo.pw = passwordEncoder.encode(changePasswordRequest.changedPassword)
                     joinwithRepository.save(userInfo)
+                    passwordChangeFlag = true
                 }
-                passwordChangeFlag = true
             }
-
+        }
         return passwordChangeFlag
     }
 
     fun deleteUser(validateUserRequest: ValidateUserRequest): Boolean {
         var deleteUserFlag: Boolean = false
-        joinwithRepository.findJoinByUserIdAndPw(validateUserRequest.userId, validateUserRequest.pw).ifPresent {
-            joinwithRepository.deleteById(it.getId().toLong())
-            deleteUserFlag = true
+
+        joinwithRepository.findJoinByUserId(validateUserRequest.userId).ifPresent {
+            val isValidateUser = ValidateUserRequest(validateUserRequest.userId, validateUserRequest.pw)
+            if (validateUser(isValidateUser)){
+                joinwithRepository.findById(it.getId().toLong()).ifPresent { userInfo ->
+                    joinwithRepository.deleteById(userInfo.id as Long)
+                    deleteUserFlag = true
+                }
+            }
         }
+
         return deleteUserFlag
     }
 }

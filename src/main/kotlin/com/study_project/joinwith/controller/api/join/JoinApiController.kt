@@ -114,8 +114,8 @@ class JoinApiController(
         notes = "사용자를 삭제하는 API")
     fun deleteUser(
         @RequestBody validateUserRequest: ValidateUserRequest
-    ) {
-        joinService.deleteUser(validateUserRequest)
+    ): Boolean {
+        return joinService.deleteUser(validateUserRequest)
     }
 
 }
