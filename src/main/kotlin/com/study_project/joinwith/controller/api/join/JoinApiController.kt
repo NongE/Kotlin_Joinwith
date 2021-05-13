@@ -4,9 +4,7 @@ import com.study_project.joinwith.database.Join
 import com.study_project.joinwith.model.request.ChangePasswordRequest
 import com.study_project.joinwith.model.request.JoinRequest
 import com.study_project.joinwith.model.request.ValidateUserRequest
-import com.study_project.joinwith.model.response.ErrorResponse
-import com.study_project.joinwith.model.response.OverlapCheckResponse
-import com.study_project.joinwith.model.response.ValidateUserResponse
+import com.study_project.joinwith.model.response.*
 import com.study_project.joinwith.service.JoinService
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
@@ -48,7 +46,7 @@ class JoinApiController(
         if (joinService.overlapCheck(userId)){
             OverlapCheckResponse().apply {
                 this.path = request.requestURI.toString()
-                this.resultCode = "Success"
+                this.resultCode = "Overlap Check Fail!"
                 this.httpStatus = HttpStatus.OK.toString()
                 this.message = "${userId}는 사용할 수 없는 아이디입니다."
                 return ResponseEntity.status(HttpStatus.OK).body(this)
@@ -56,7 +54,7 @@ class JoinApiController(
         }else{
             OverlapCheckResponse().apply {
                 this.path = request.requestURI.toString()
-                this.resultCode = "Success"
+                this.resultCode = "Overlap Check Success!"
                 this.httpStatus = HttpStatus.BAD_REQUEST.toString()
                 this.message = "${userId}는 사용 가능한 아이디입니다."
                 return ResponseEntity.status(HttpStatus.OK).body(this)
@@ -69,8 +67,28 @@ class JoinApiController(
     @ApiOperation(value = "회원가입 API", notes = "사용자의 정보를 전달받아 이를 DB에 저장하는 API")
     fun join(
         @RequestBody joinRequest: JoinRequest,
-    ): Boolean {
-        return joinService.save(joinRequest)
+        request: HttpServletRequest
+    ): ResponseEntity<JoinResponse> {
+        if (joinService.save(joinRequest)){
+            JoinResponse().apply {
+                this.path = request.requestURI.toString()
+                this.resultCode = "Join Success!"
+                this.httpStatus = HttpStatus.OK.toString()
+                this.id = joinRequest.user_id
+                this.message = "${this.id}님 가입 완료"
+                return ResponseEntity.status(HttpStatus.OK).body(this)
+            }
+        }else{
+            JoinResponse().apply {
+                this.path = request.requestURI.toString()
+                this.resultCode = "Join Fail!"
+                this.httpStatus = HttpStatus.BAD_REQUEST.toString()
+                this.id = joinRequest.user_id
+                this.message = "${this.id} 가입 실패"
+                return ResponseEntity.status(HttpStatus.OK).body(this)
+            }
+        }
+
 
     }
 
@@ -84,7 +102,7 @@ class JoinApiController(
         if (joinService.validateUser(validateUserRequest)){
             ValidateUserResponse().apply {
                 this.path = request.requestURI.toString()
-                this.resultCode = "Success"
+                this.resultCode = "Validate Success!"
                 this.httpStatus = HttpStatus.OK.toString()
                 this.message = "아이디, 비밀번호 검증 완료"
                 return ResponseEntity.status(HttpStatus.OK).body(this)
@@ -92,7 +110,7 @@ class JoinApiController(
         }else{
             ValidateUserResponse().apply {
                 this.path = request.requestURI.toString()
-                this.resultCode = "Fail"
+                this.resultCode = "Validate Fail!"
                 this.httpStatus = HttpStatus.BAD_REQUEST.toString()
                 this.message = "아이디, 비밀번호 검증 실패"
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(this)
@@ -104,18 +122,57 @@ class JoinApiController(
     @ApiOperation(value = "사용자 비밀번호 변경 API",
         notes = "사용자의 비밀번호를 변경하는 API // false = 변경 실패, true = 변경 성공")
     fun changePassword(
-        @RequestBody changePasswordRequest: ChangePasswordRequest
-    ): Boolean {
-        return joinService.changePassword(changePasswordRequest)
+        @RequestBody changePasswordRequest: ChangePasswordRequest,
+        request: HttpServletRequest
+    ): ResponseEntity<ChangePasswordResponse> {
+
+        if (joinService.changePassword(changePasswordRequest)){
+            ChangePasswordResponse().apply {
+                this.path = request.requestURI.toString()
+                this.resultCode = "Change Password Success!"
+                this.httpStatus = HttpStatus.OK.toString()
+                this.message = "비밀번호 변경 완료"
+                return ResponseEntity.status(HttpStatus.OK).body(this)
+            }
+        }else{
+            ChangePasswordResponse().apply {
+                this.path = request.requestURI.toString()
+                this.resultCode = "Change Password Fail!"
+                this.httpStatus = HttpStatus.BAD_REQUEST.toString()
+                this.message = "비밀번호 변경 실패"
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(this)
+            }
+        }
+
     }
 
     @DeleteMapping(path = ["/delete_password"])
     @ApiOperation(value = "사용자 삭제 API",
         notes = "사용자를 삭제하는 API")
     fun deleteUser(
-        @RequestBody validateUserRequest: ValidateUserRequest
-    ): Boolean {
-        return joinService.deleteUser(validateUserRequest)
+        @RequestBody validateUserRequest: ValidateUserRequest,
+        request: HttpServletRequest
+    ): ResponseEntity<DeleteUserResponse> {
+
+        if (joinService.deleteUser(validateUserRequest)){
+            DeleteUserResponse().apply {
+                this.path = request.requestURI.toString()
+                this.resultCode = "Delete User Success!"
+                this.httpStatus = HttpStatus.OK.toString()
+                this.message = "회원정보 삭제 완료"
+                return ResponseEntity.status(HttpStatus.OK).body(this)
+            }
+        }else{
+            DeleteUserResponse().apply {
+                this.path = request.requestURI.toString()
+                this.resultCode = "Delete User Fail!"
+                this.httpStatus = HttpStatus.BAD_REQUEST.toString()
+                this.message = "회원정보 삭제 실패"
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(this)
+            }
+        }
+
+
     }
 
 }
