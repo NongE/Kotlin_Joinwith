@@ -37,8 +37,8 @@ class JoinService(
 
     fun validateUser(validateUserRequest: ValidateUserRequest): Boolean {
         var validateFlag = false
-        joinwithRepository.findJoinByUserId(validateUserRequest.userId).ifPresent {
-            if (passwordEncoder.matches(validateUserRequest.pw, it.getPw())){
+        joinwithRepository.findJoinByUserId(validateUserRequest.userId as String).ifPresent {
+            if (passwordEncoder.matches(validateUserRequest.pw, it.getPw())) {
                 validateFlag = true
             }
         }
@@ -48,8 +48,9 @@ class JoinService(
     fun changePassword(changePasswordRequest: ChangePasswordRequest): Boolean {
         var passwordChangeFlag: Boolean = false
         joinwithRepository.findJoinByUserId(changePasswordRequest.userId).ifPresent {
-            val isValidateUser = ValidateUserRequest(changePasswordRequest.userId, changePasswordRequest.presentPassword)
-            if (validateUser(isValidateUser)){
+            val isValidateUser =
+                ValidateUserRequest(changePasswordRequest.userId, changePasswordRequest.presentPassword)
+            if (validateUser(isValidateUser)) {
                 joinwithRepository.findById(it.getId().toLong()).ifPresent { userInfo ->
                     userInfo.pw = passwordEncoder.encode(changePasswordRequest.changedPassword)
                     joinwithRepository.save(userInfo)
@@ -63,9 +64,9 @@ class JoinService(
     fun deleteUser(validateUserRequest: ValidateUserRequest): Boolean {
         var deleteUserFlag: Boolean = false
 
-        joinwithRepository.findJoinByUserId(validateUserRequest.userId).ifPresent {
+        joinwithRepository.findJoinByUserId(validateUserRequest.userId as String).ifPresent {
             val isValidateUser = ValidateUserRequest(validateUserRequest.userId, validateUserRequest.pw)
-            if (validateUser(isValidateUser)){
+            if (validateUser(isValidateUser)) {
                 joinwithRepository.findById(it.getId().toLong()).ifPresent { userInfo ->
                     joinwithRepository.deleteById(userInfo.id as Long)
                     deleteUserFlag = true

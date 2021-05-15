@@ -5,12 +5,16 @@ import com.study_project.joinwith.config.WebSecurityConfig
 import com.study_project.joinwith.database.Join
 import com.study_project.joinwith.database.convertJoin
 import com.study_project.joinwith.model.request.JoinRequest
+import com.study_project.joinwith.model.request.OverlapCheckRequest
+import com.study_project.joinwith.model.request.ValidateUserRequest
 import com.study_project.joinwith.repository.JoinwithRepository
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -24,6 +28,13 @@ class JoinServiceTest(
 
     val joinService = JoinService(joinwithRepository, passwordEncoder)
 
+    @AfterEach
+    fun deleteTestData() {
+
+
+    }
+
+    @Modifying(clearAutomatically = true)
     @Test
     fun saveTest() {
         val userData = JoinRequest().apply {
@@ -36,11 +47,22 @@ class JoinServiceTest(
             this.phoneNumber = "JoinTestPhoneNumber"
         }
 
-        val result = joinwithRepository.save(Join().convertJoin(userData))
-        val result2 = joinService.save(userData)
+        val result = joinService.save(userData)
 
-        Assertions.assertEquals("JoinTestID", result.userId)
-        Assertions.assertEquals(true, result2)
+        Assertions.assertEquals(true, result)
     }
+
+
+    @Modifying(clearAutomatically = true)
+    @Test
+    fun overlapCheckTest() {
+
+        val overlapId = joinService.overlapCheck("JoinTestID")
+        val notOverlapId = joinService.overlapCheck("JoinTestID_not_overlap")
+
+        Assertions.assertEquals(true, overlapId)
+        Assertions.assertEquals(false, notOverlapId)
+    }
+
 
 }
