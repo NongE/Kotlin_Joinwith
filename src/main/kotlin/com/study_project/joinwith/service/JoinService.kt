@@ -63,7 +63,6 @@ class JoinService(
 
     fun deleteUser(validateUserRequest: ValidateUserRequest): Boolean {
         var deleteUserFlag: Boolean = false
-
         joinwithRepository.findJoinByUserId(validateUserRequest.userId as String).ifPresent {
             val isValidateUser = ValidateUserRequest(validateUserRequest.userId, validateUserRequest.pw)
             if (validateUser(isValidateUser)) {

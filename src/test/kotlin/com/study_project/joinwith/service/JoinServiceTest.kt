@@ -1,26 +1,19 @@
 package com.study_project.joinwith.service
 
-import com.study_project.joinwith.config.PasswordEncoderConfig
-import com.study_project.joinwith.config.WebSecurityConfig
-import com.study_project.joinwith.database.Join
-import com.study_project.joinwith.database.convertJoin
+
 import com.study_project.joinwith.model.request.JoinRequest
-import com.study_project.joinwith.model.request.OverlapCheckRequest
 import com.study_project.joinwith.model.request.ValidateUserRequest
 import com.study_project.joinwith.repository.JoinwithRepository
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.test.context.TestConstructor
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JoinServiceTest(
     private val joinwithRepository: JoinwithRepository,
     private val passwordEncoder: PasswordEncoder,
@@ -28,18 +21,26 @@ class JoinServiceTest(
 
     val joinService = JoinService(joinwithRepository, passwordEncoder)
 
-    @AfterEach
+    @AfterAll
+    @Modifying(clearAutomatically = true)
     fun deleteTestData() {
+        println(joinService.find())
+        val testUserData = ValidateUserRequest().apply {
+            this.userId = "JoinTestID"
+            this.pw = "JoinTestPw"
+        }
 
+        val result = joinService.deleteUser(testUserData)
+        Assertions.assertEquals(true, result)
 
     }
 
-    @Modifying(clearAutomatically = true)
     @Test
+    @Modifying(clearAutomatically = true)
     fun saveTest() {
         val userData = JoinRequest().apply {
             this.user_id = "JoinTestID"
-            this.pw = passwordEncoder.encode("JoinTestPw")
+            this.pw = "JoinTestPw"
             this.userName = "JoinTestName"
             this.address = "JoinTestAddress"
             this.birth = "JoinTestBirth"
@@ -52,8 +53,6 @@ class JoinServiceTest(
         Assertions.assertEquals(true, result)
     }
 
-
-    @Modifying(clearAutomatically = true)
     @Test
     fun overlapCheckTest() {
 
