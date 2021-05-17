@@ -1,6 +1,7 @@
 package com.study_project.joinwith.service
 
 
+import com.study_project.joinwith.model.request.ChangePasswordRequest
 import com.study_project.joinwith.model.request.JoinRequest
 import com.study_project.joinwith.model.request.ValidateUserRequest
 import com.study_project.joinwith.repository.JoinwithRepository
@@ -27,7 +28,7 @@ class JoinServiceTest(
         println(joinService.find())
         val testUserData = ValidateUserRequest().apply {
             this.userId = "JoinTestID"
-            this.pw = "JoinTestPw"
+            this.pw = "JoinTestChangedPw"
         }
 
         val result = joinService.deleteUser(testUserData)
@@ -61,6 +62,17 @@ class JoinServiceTest(
 
         Assertions.assertEquals(true, overlapId)
         Assertions.assertEquals(false, notOverlapId)
+    }
+
+    @Test
+    @Modifying(clearAutomatically = true)
+    fun changePasswordTest() {
+        val userData = ChangePasswordRequest("JoinTestID", "JoinTestPw", "JoinTestChangedPw")
+
+        val result = joinService.changePassword(userData)
+
+        Assertions.assertEquals(true, result)
+
     }
 
 
