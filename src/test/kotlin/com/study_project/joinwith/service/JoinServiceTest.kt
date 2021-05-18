@@ -15,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class JoinServiceTest(
     private val joinwithRepository: JoinwithRepository,
     private val passwordEncoder: PasswordEncoder,
@@ -37,6 +38,7 @@ class JoinServiceTest(
     }
 
     @Test
+    @Order(1)
     @Modifying(clearAutomatically = true)
     fun saveTest() {
         val userData = JoinRequest().apply {
@@ -55,6 +57,7 @@ class JoinServiceTest(
     }
 
     @Test
+    @Order(2)
     fun overlapCheckTest() {
 
         val overlapId = joinService.overlapCheck("JoinTestID")
@@ -65,6 +68,7 @@ class JoinServiceTest(
     }
 
     @Test
+    @Order(3)
     @Modifying(clearAutomatically = true)
     fun changePasswordTest() {
         val userData = ChangePasswordRequest("JoinTestID", "JoinTestPw", "JoinTestChangedPw")
@@ -72,8 +76,27 @@ class JoinServiceTest(
         val result = joinService.changePassword(userData)
 
         Assertions.assertEquals(true, result)
-
     }
 
+    @Test
+    @Order(4)
+    fun validateUserTest() {
+        val userWithChangedPw = ValidateUserRequest().apply {
+            this.userId = "JoinTestID"
+            this.pw = "JoinTestChangedPw"
+        }
+
+        val userWithNotChangedPw = ValidateUserRequest().apply {
+            this.userId = "JoinTestID"
+            this.pw = "JoinTestPw"
+        }
+
+        val resultWithChangedPw = joinService.validateUser(userWithChangedPw)
+        println(resultWithChangedPw)
+        val resultWithNotChangedPw = joinService.validateUser(userWithNotChangedPw)
+
+        Assertions.assertEquals(true, resultWithChangedPw)
+        Assertions.assertEquals(false, resultWithNotChangedPw)
+    }
 
 }
