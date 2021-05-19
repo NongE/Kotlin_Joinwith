@@ -10,8 +10,11 @@ import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.BindingResult
+import org.springframework.validation.FieldError
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
+import javax.validation.Valid
 
 
 @RestController
@@ -66,9 +69,13 @@ class JoinApiController(
     @PostMapping(path = [""])
     @ApiOperation(value = "회원가입 API", notes = "사용자의 정보를 전달받아 이를 DB에 저장하는 API")
     fun join(
-        @RequestBody joinRequest: JoinRequest,
+        @Valid
+        @RequestBody
+        joinRequest: JoinRequest,
         request: HttpServletRequest
     ): ResponseEntity<JoinResponse> {
+
+
         if (joinService.save(joinRequest)){
             JoinResponse().apply {
                 this.path = request.requestURI.toString()
