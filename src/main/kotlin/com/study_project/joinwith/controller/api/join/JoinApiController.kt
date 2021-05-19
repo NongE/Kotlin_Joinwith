@@ -42,11 +42,11 @@ class JoinApiController(
         notes = "사용자가 사용하려는 아이디가 현재 DB에 있는지 중복 검사하는 API // false = 사용 가능한 ID, true = 중복된 ID")
     fun overlapCheck(
         @ApiParam(value = "사용하고자 하는 ID", example = "helloWorld")
-        @RequestParam userId:String,
-        request: HttpServletRequest
+        @RequestParam userId: String,
+        request: HttpServletRequest,
     ): ResponseEntity<OverlapCheckResponse> {
         println(joinService.overlapCheck(userId))
-        if (joinService.overlapCheck(userId)){
+        if (joinService.overlapCheck(userId)) {
             OverlapCheckResponse().apply {
                 this.path = request.requestURI.toString()
                 this.resultCode = "Overlap Check Fail!"
@@ -54,7 +54,7 @@ class JoinApiController(
                 this.message = "${userId}는 사용할 수 없는 아이디입니다."
                 return ResponseEntity.status(HttpStatus.OK).body(this)
             }
-        }else{
+        } else {
             OverlapCheckResponse().apply {
                 this.path = request.requestURI.toString()
                 this.resultCode = "Overlap Check Success!"
@@ -72,29 +72,45 @@ class JoinApiController(
         @Valid
         @RequestBody
         joinRequest: JoinRequest,
-        request: HttpServletRequest
-    ): ResponseEntity<JoinResponse> {
+        bindingResult: BindingResult,
+        // request: HttpServletRequest
+    ): ResponseEntity<ErrorResponse> {
 
+        return if (bindingResult.hasErrors()) {
+            val errorResponse = ErrorResponse()
 
-        if (joinService.save(joinRequest)){
-            JoinResponse().apply {
-                this.path = request.requestURI.toString()
-                this.resultCode = "Join Success!"
-                this.httpStatus = HttpStatus.OK.toString()
-                this.id = joinRequest.user_id
-                this.message = "${this.id}님 가입 완료"
-                return ResponseEntity.status(HttpStatus.OK).body(this)
+            for (errorElement in bindingResult.allErrors) {
+                Error().apply {
+                    this.errorCode = errorElement.code
+                    this.message = errorElement.defaultMessage
+                    errorResponse.message.add(this)
+                }
             }
-        }else{
-            JoinResponse().apply {
-                this.path = request.requestURI.toString()
-                this.resultCode = "Join Fail!"
-                this.httpStatus = HttpStatus.BAD_REQUEST.toString()
-                this.id = joinRequest.user_id
-                this.message = "${this.id} 가입 실패"
-                return ResponseEntity.status(HttpStatus.OK).body(this)
-            }
+            ResponseEntity.badRequest().body(errorResponse)
+        } else {
+            ResponseEntity.badRequest().body(ErrorResponse())
         }
+
+
+//        if (joinService.save(joinRequest)){
+//            JoinResponse().apply {
+//                this.path = request.requestURI.toString()
+//                this.resultCode = "Join Success!"
+//                this.httpStatus = HttpStatus.OK.toString()
+//                this.id = joinRequest.user_id
+//                this.message = "${this.id}님 가입 완료"
+//                return ResponseEntity.status(HttpStatus.OK).body(this)
+//            }
+//        }else{
+//            JoinResponse().apply {
+//                this.path = request.requestURI.toString()
+//                this.resultCode = "Join Fail!"
+//                this.httpStatus = HttpStatus.BAD_REQUEST.toString()
+//                this.id = joinRequest.user_id
+//                this.message = "${this.id} 가입 실패"
+//                return ResponseEntity.status(HttpStatus.OK).body(this)
+//            }
+//        }
 
 
     }
@@ -104,9 +120,9 @@ class JoinApiController(
         notes = "아이디와 비밀번호를 활용하여 현재 사용자가 유효한 사용자인지 검증하는 API // false = 검증 실패, true = 검증 완료")
     fun validateUser(
         @RequestBody validateUserRequest: ValidateUserRequest,
-        request: HttpServletRequest
+        request: HttpServletRequest,
     ): ResponseEntity<ValidateUserResponse> {
-        if (joinService.validateUser(validateUserRequest)){
+        if (joinService.validateUser(validateUserRequest)) {
             ValidateUserResponse().apply {
                 this.path = request.requestURI.toString()
                 this.resultCode = "Validate Success!"
@@ -114,7 +130,7 @@ class JoinApiController(
                 this.message = "아이디, 비밀번호 검증 완료"
                 return ResponseEntity.status(HttpStatus.OK).body(this)
             }
-        }else{
+        } else {
             ValidateUserResponse().apply {
                 this.path = request.requestURI.toString()
                 this.resultCode = "Validate Fail!"
@@ -130,10 +146,10 @@ class JoinApiController(
         notes = "사용자의 비밀번호를 변경하는 API // false = 변경 실패, true = 변경 성공")
     fun changePassword(
         @RequestBody changePasswordRequest: ChangePasswordRequest,
-        request: HttpServletRequest
+        request: HttpServletRequest,
     ): ResponseEntity<ChangePasswordResponse> {
 
-        if (joinService.changePassword(changePasswordRequest)){
+        if (joinService.changePassword(changePasswordRequest)) {
             ChangePasswordResponse().apply {
                 this.path = request.requestURI.toString()
                 this.resultCode = "Change Password Success!"
@@ -141,7 +157,7 @@ class JoinApiController(
                 this.message = "비밀번호 변경 완료"
                 return ResponseEntity.status(HttpStatus.OK).body(this)
             }
-        }else{
+        } else {
             ChangePasswordResponse().apply {
                 this.path = request.requestURI.toString()
                 this.resultCode = "Change Password Fail!"
@@ -158,10 +174,10 @@ class JoinApiController(
         notes = "사용자를 삭제하는 API")
     fun deleteUser(
         @RequestBody validateUserRequest: ValidateUserRequest,
-        request: HttpServletRequest
+        request: HttpServletRequest,
     ): ResponseEntity<DeleteUserResponse> {
 
-        if (joinService.deleteUser(validateUserRequest)){
+        if (joinService.deleteUser(validateUserRequest)) {
             DeleteUserResponse().apply {
                 this.path = request.requestURI.toString()
                 this.resultCode = "Delete User Success!"
@@ -169,7 +185,7 @@ class JoinApiController(
                 this.message = "회원정보 삭제 완료"
                 return ResponseEntity.status(HttpStatus.OK).body(this)
             }
-        }else{
+        } else {
             DeleteUserResponse().apply {
                 this.path = request.requestURI.toString()
                 this.resultCode = "Delete User Fail!"
