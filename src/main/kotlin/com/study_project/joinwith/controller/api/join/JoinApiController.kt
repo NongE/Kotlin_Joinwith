@@ -73,10 +73,10 @@ class JoinApiController(
         @RequestBody
         joinRequest: JoinRequest,
         bindingResult: BindingResult,
-        // request: HttpServletRequest
-    ): ResponseEntity<ErrorResponse> {
+        request: HttpServletRequest
+    ): ResponseEntity<Any> {
 
-        return if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             val errorResponse = ErrorResponse()
 
             for (errorElement in bindingResult.allErrors) {
@@ -86,31 +86,28 @@ class JoinApiController(
                     errorResponse.message.add(this)
                 }
             }
-            ResponseEntity.badRequest().body(errorResponse)
+            return ResponseEntity.badRequest().body(errorResponse)
         } else {
-            ResponseEntity.badRequest().body(ErrorResponse())
+            if (joinService.save(joinRequest)){
+                JoinResponse().apply {
+                    this.path = request.requestURI.toString()
+                    this.resultCode = "Join Success!"
+                    this.httpStatus = HttpStatus.OK.toString()
+                    this.id = joinRequest.user_id
+                    this.message = "${this.id}님 가입 완료"
+                    return ResponseEntity.status(HttpStatus.OK).body(this)
+                }
+            }else{
+                JoinResponse().apply {
+                    this.path = request.requestURI.toString()
+                    this.resultCode = "Join Fail!"
+                    this.httpStatus = HttpStatus.BAD_REQUEST.toString()
+                    this.id = joinRequest.user_id
+                    this.message = "${this.id} 가입 실패"
+                    return ResponseEntity.status(HttpStatus.OK).body(this)
+                }
+            }
         }
-
-
-//        if (joinService.save(joinRequest)){
-//            JoinResponse().apply {
-//                this.path = request.requestURI.toString()
-//                this.resultCode = "Join Success!"
-//                this.httpStatus = HttpStatus.OK.toString()
-//                this.id = joinRequest.user_id
-//                this.message = "${this.id}님 가입 완료"
-//                return ResponseEntity.status(HttpStatus.OK).body(this)
-//            }
-//        }else{
-//            JoinResponse().apply {
-//                this.path = request.requestURI.toString()
-//                this.resultCode = "Join Fail!"
-//                this.httpStatus = HttpStatus.BAD_REQUEST.toString()
-//                this.id = joinRequest.user_id
-//                this.message = "${this.id} 가입 실패"
-//                return ResponseEntity.status(HttpStatus.OK).body(this)
-//            }
-//        }
 
 
     }
