@@ -22,8 +22,13 @@ class JoinApiControllerAdvice {
             this.resultCode = "Fail"
             this.httpStatus = HttpStatus.BAD_REQUEST.value().toString()
             this.httpMethod = request.method
-            // this.message = "파라미터가 부족합니다."
             this.path = request.requestURI.toString()
+        }
+
+        Error().apply {
+            this.errorCode = "Missing Parameter"
+            this.message = "올바르지 않은 파라미터입니다."
+            errorResponse.message.add(this)
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse)

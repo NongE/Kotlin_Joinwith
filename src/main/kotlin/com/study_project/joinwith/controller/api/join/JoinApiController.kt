@@ -73,7 +73,8 @@ class JoinApiController(
         @RequestBody
         joinRequest: JoinRequest,
         bindingResult: BindingResult,
-        request: HttpServletRequest
+        request: HttpServletRequest,
+
     ): ResponseEntity<Any> {
 
         if (bindingResult.hasErrors()) {
