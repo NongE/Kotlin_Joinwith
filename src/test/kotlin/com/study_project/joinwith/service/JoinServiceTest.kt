@@ -72,10 +72,18 @@ class JoinServiceTest(
     @Modifying(clearAutomatically = true)
     fun changePasswordTest() {
         val userData = ChangePasswordRequest("JoinTestID", "JoinTestPw", "JoinTestChangedPw")
-
         val result = joinService.changePassword(userData)
-
         Assertions.assertEquals(true, result)
+
+        val userDataNotCorrectPw = ChangePasswordRequest("JoinTestID", "JoinTestPw", "JoinTestChangedPw")
+        val resultNotCorrectPw = joinService.changePassword(userDataNotCorrectPw)
+        Assertions.assertEquals(false, resultNotCorrectPw)
+
+        val userDataNotExistId = ChangePasswordRequest("NotExistJoinTestID", "NotExistJoinTestPw", "NotExistJoinTestChangedPw")
+        val resultNotExistId = joinService.changePassword(userDataNotExistId)
+        Assertions.assertEquals(false, resultNotExistId)
+
+
     }
 
     @Test
