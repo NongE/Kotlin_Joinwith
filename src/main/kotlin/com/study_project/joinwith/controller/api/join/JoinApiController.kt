@@ -2,6 +2,7 @@ package com.study_project.joinwith.controller.api.join
 
 import com.study_project.joinwith.database.Join
 import com.study_project.joinwith.model.request.ChangePasswordRequest
+import com.study_project.joinwith.model.request.DeleteUserRequest
 import com.study_project.joinwith.model.request.JoinRequest
 import com.study_project.joinwith.model.request.ValidateUserRequest
 import com.study_project.joinwith.model.response.*
@@ -171,11 +172,11 @@ class JoinApiController(
     @ApiOperation(value = "사용자 삭제 API",
         notes = "사용자를 삭제하는 API")
     fun deleteUser(
-        @RequestBody validateUserRequest: ValidateUserRequest,
+        @RequestBody deleteUserRequest: DeleteUserRequest,
         request: HttpServletRequest,
     ): ResponseEntity<DeleteUserResponse> {
 
-        if (joinService.deleteUser(validateUserRequest)) {
+        if (joinService.deleteUser(deleteUserRequest)) {
             DeleteUserResponse().apply {
                 this.path = request.requestURI.toString()
                 this.resultCode = "Delete User Success!"

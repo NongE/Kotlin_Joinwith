@@ -2,6 +2,7 @@ package com.study_project.joinwith.service
 
 
 import com.study_project.joinwith.model.request.ChangePasswordRequest
+import com.study_project.joinwith.model.request.DeleteUserRequest
 import com.study_project.joinwith.model.request.JoinRequest
 import com.study_project.joinwith.model.request.ValidateUserRequest
 import com.study_project.joinwith.repository.JoinwithRepository
@@ -27,7 +28,7 @@ class JoinServiceTest(
     @Modifying(clearAutomatically = true)
     fun deleteTestData() {
         println(joinService.find())
-        val testUserData = ValidateUserRequest().apply {
+        val testUserData = DeleteUserRequest().apply {
             this.userId = "JoinTestID"
             this.pw = "JoinTestChangedPw"
         }
