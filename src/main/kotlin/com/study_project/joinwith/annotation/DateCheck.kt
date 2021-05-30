@@ -5,7 +5,6 @@ import javax.validation.Constraint
 import javax.validation.Payload
 import kotlin.reflect.KClass
 
-
 @Constraint(validatedBy = [DateCheckValidator::class])
 @Target(
     AnnotationTarget.FIELD,
@@ -14,6 +13,7 @@ import kotlin.reflect.KClass
 )
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
+// 날짜의 형식이 맞는지 확인하는 Annotation, DateCheckValidator로 검증을 진행함.
 annotation class DateCheck(
     val pattern: String = "yyyy-MM-dd",
     val message: String = "올바르지 않는 날짜 형식입니다",

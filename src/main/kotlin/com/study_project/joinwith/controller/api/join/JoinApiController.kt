@@ -32,15 +32,19 @@ class JoinApiController(
     //Autowired
     //private lateinit var joinService:JoinService
 
+    // 임시로 데이터베이스 내 정보를 확인하기 위한 컨트롤러
+    // 추후 삭제 예정
     @GetMapping(path = [""])
     @ApiOperation(value = "전체 회원 목록을 불러오는 API", notes = "임시로 회원 목록을 확인하기 위해 전체 회원 목록을 불러오는 API")
     fun find(): MutableIterable<Join> {
         return joinService.find()
     }
 
+
+    // 아이디 중복 검사를 진행하는 컨트롤러
     @PostMapping(path = ["/overlap_check"])
     @ApiOperation(value = "ID 중복 검사 API",
-        notes = "사용자가 사용하려는 아이디가 현재 DB에 있는지 중복 검사하는 API // false = 사용 가능한 ID, true = 중복된 ID")
+        notes = "사용자가 사용하려는 아이디가 현재 DB에 있는지 중복 검사하는 API")
     fun overlapCheck(
         @ApiParam(value = "사용하고자 하는 ID", example = "helloWorld")
         @RequestParam userId: String,
@@ -67,6 +71,7 @@ class JoinApiController(
 
     }
 
+    // 사용자의 정보를 받아 DB에 저장 (회원가입)하는 컨트롤러
     @PostMapping(path = [""])
     @ApiOperation(value = "회원가입 API", notes = "사용자의 정보를 전달받아 이를 DB에 저장하는 API")
     fun join(
@@ -77,10 +82,10 @@ class JoinApiController(
         request: HttpServletRequest,
 
     ): ResponseEntity<Any> {
-
+        // 가입 중 Validate 결과에 따른 에러 메시지 출력
+        // 자세한 조건은 JoinRequest Data Class 참고
         if (bindingResult.hasErrors()) {
             val errorResponse = ErrorResponse()
-
             for (errorElement in bindingResult.allErrors) {
                 Error().apply {
                     this.errorCode = errorElement.code
@@ -90,6 +95,7 @@ class JoinApiController(
             }
             return ResponseEntity.badRequest().body(errorResponse)
         } else {
+            // Validate을 통과한 이후 회원가입 진행
             if (joinService.save(joinRequest)){
                 JoinResponse().apply {
                     this.path = request.requestURI.toString()
@@ -114,9 +120,10 @@ class JoinApiController(
 
     }
 
+    // 아이디와 비밀번호를 통해 유효한 사용자인지 검증하는 컨트롤러
     @PostMapping(path = ["/validate_user"])
     @ApiOperation(value = "사용자 검증 API",
-        notes = "아이디와 비밀번호를 활용하여 현재 사용자가 유효한 사용자인지 검증하는 API // false = 검증 실패, true = 검증 완료")
+        notes = "아이디와 비밀번호를 활용하여 현재 사용자가 유효한 사용자인지 검증하는 API")
     fun validateUser(
         @RequestBody validateUserRequest: ValidateUserRequest,
         request: HttpServletRequest,
@@ -140,6 +147,7 @@ class JoinApiController(
         }
     }
 
+    // 아이디, 현재 비밀번호, 변경할 비밀번호를 받아 비밀번호를 변경하는 컨트롤러
     @PatchMapping(path = ["/change_password"])
     @ApiOperation(value = "사용자 비밀번호 변경 API",
         notes = "사용자의 비밀번호를 변경하는 API // false = 변경 실패, true = 변경 성공")
@@ -168,6 +176,7 @@ class JoinApiController(
 
     }
 
+    // 사용자 삭제 컨트롤러
     @DeleteMapping(path = ["/delete_password"])
     @ApiOperation(value = "사용자 삭제 API",
         notes = "사용자를 삭제하는 API")

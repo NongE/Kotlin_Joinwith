@@ -7,6 +7,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "user")
 data class Join(
+    // pk는 auto increment 활용
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
@@ -15,6 +16,7 @@ data class Join(
 
     var pw: String? = null,
 
+    // snake case 변경
     @Column(name = "user_name")
     var userName: String? = null,
 
@@ -22,12 +24,14 @@ data class Join(
 
     var address: String? = null,
 
+    // snake case 변경
     @Column(name = "phone_number")
     var phoneNumber: String? = null,
 
     var birth: String? = null,
 )
 
+// DTO 로 변환하기 위한 함수
 fun Join.convertJoin(joinRequest: JoinRequest): Join {
     return Join().apply {
         this.userId = joinRequest.user_id

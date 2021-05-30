@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter
 import javax.validation.ConstraintValidator
 import javax.validation.ConstraintValidatorContext
 
-
+// 입력받은 내용이 날짜형식에 맞는지 확인하는 클래스
 class DateCheckValidator: ConstraintValidator<DateCheck, String> {
 
     private var pattern: String? = null

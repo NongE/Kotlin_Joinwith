@@ -15,9 +15,11 @@ import javax.servlet.http.HttpServletRequest
 @RestControllerAdvice(basePackageClasses = [JoinApiController::class])
 class JoinApiControllerAdvice {
 
+    // 올바르지 않은 파라미터 (파라미터 수가 적은 경우)에 발생하는 Exception 처리
     @ExceptionHandler(value = [MissingServletRequestParameterException::class])
     fun missingServletRequestParameterException(e: Exception, request: HttpServletRequest): ResponseEntity<ErrorResponse> {
 
+        // ResponseEntity로 응답
         val errorResponse = ErrorResponse().apply{
             this.resultCode = "Fail"
             this.httpStatus = HttpStatus.BAD_REQUEST.value().toString()
@@ -25,6 +27,7 @@ class JoinApiControllerAdvice {
             this.path = request.requestURI.toString()
         }
 
+        // 에러코드 생성
         Error().apply {
             this.errorCode = "Missing Parameter"
             this.message = "올바르지 않은 파라미터입니다."
