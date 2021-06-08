@@ -23,7 +23,7 @@ class JoinService(
 
     // 중복 검사를 진행하는 함수
     fun overlapCheck(userId: String): Boolean {
-        return joinwithRepository.findJoinByUserId(userId).isPresent
+        return joinwithRepository.findByUserId(userId).isPresent
     }
 
     // DB에 사용자 정보를 저장하는 함수
@@ -41,7 +41,7 @@ class JoinService(
     fun validateUser(validateUserRequest: ValidateUserRequest): Boolean {
         var validateFlag = false
         // 아이디를 토대로 DB 쿼리, 해당 비밀번호와 입력 받은 비밀번호가 동일한지 검증
-        joinwithRepository.findJoinByUserId(validateUserRequest.userId as String).ifPresent {
+        joinwithRepository.findByUserId(validateUserRequest.userId as String).ifPresent {
             if (passwordEncoder.matches(validateUserRequest.pw, it.getPw())) {
                 // 동일하다면 true 값 반환
                 validateFlag = true
@@ -67,7 +67,7 @@ class JoinService(
     ): Boolean {
         var passwordChangeFlag1 = passwordChangeFlag
         // 아이디를 토대로 쿼리 진행
-        joinwithRepository.findJoinByUserId(changePasswordRequest.userId).ifPresent {
+        joinwithRepository.findByUserId(changePasswordRequest.userId).ifPresent {
             val isValidateUser =
                 ValidateUserRequest(changePasswordRequest.userId, changePasswordRequest.presentPassword)
             // 유효한 사용자인지 검증, 유효하다면 true, 나머지는 false
@@ -97,7 +97,7 @@ class JoinService(
     ): Boolean {
         var deleteUserFlag1 = deleteUserFlag
         // 아이디를 토대로 검증
-        joinwithRepository.findJoinByUserId(deleteUserRequest.userId as String).ifPresent {
+        joinwithRepository.findByUserId(deleteUserRequest.userId as String).ifPresent {
             val isValidateUser = ValidateUserRequest(deleteUserRequest.userId, deleteUserRequest.pw)
             if (validateUser(isValidateUser)) {
                 joinwithRepository.findById(it.getId().toLong()).ifPresent { userInfo ->

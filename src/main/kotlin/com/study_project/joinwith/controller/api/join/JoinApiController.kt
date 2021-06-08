@@ -1,6 +1,5 @@
 package com.study_project.joinwith.controller.api.join
 
-import com.study_project.joinwith.database.Join
 import com.study_project.joinwith.model.request.ChangePasswordRequest
 import com.study_project.joinwith.model.request.DeleteUserRequest
 import com.study_project.joinwith.model.request.JoinRequest
@@ -12,7 +11,6 @@ import io.swagger.annotations.ApiParam
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindingResult
-import org.springframework.validation.FieldError
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
@@ -34,11 +32,11 @@ class JoinApiController(
 
     // 임시로 데이터베이스 내 정보를 확인하기 위한 컨트롤러
     // 추후 삭제 예정
-    @GetMapping(path = [""])
-    @ApiOperation(value = "전체 회원 목록을 불러오는 API", notes = "임시로 회원 목록을 확인하기 위해 전체 회원 목록을 불러오는 API")
-    fun find(): MutableIterable<Join> {
-        return joinService.find()
-    }
+//    @GetMapping(path = [""])
+//    @ApiOperation(value = "전체 회원 목록을 불러오는 API", notes = "임시로 회원 목록을 확인하기 위해 전체 회원 목록을 불러오는 API")
+//    fun find(): MutableIterable<Join> {
+//        return joinService.find()
+//    }
 
 
     // 아이디 중복 검사를 진행하는 컨트롤러
@@ -55,7 +53,7 @@ class JoinApiController(
             OverlapCheckResponse().apply {
                 this.path = request.requestURI.toString()
                 this.resultCode = "Overlap Check Fail!"
-                this.httpStatus = HttpStatus.OK.toString()
+                this.httpStatus = HttpStatus.BAD_REQUEST.toString()
                 this.message = "${userId}는 사용할 수 없는 아이디입니다."
                 return ResponseEntity.status(HttpStatus.OK).body(this)
             }
@@ -63,7 +61,7 @@ class JoinApiController(
             OverlapCheckResponse().apply {
                 this.path = request.requestURI.toString()
                 this.resultCode = "Overlap Check Success!"
-                this.httpStatus = HttpStatus.BAD_REQUEST.toString()
+                this.httpStatus = HttpStatus.OK.toString()
                 this.message = "${userId}는 사용 가능한 아이디입니다."
                 return ResponseEntity.status(HttpStatus.OK).body(this)
             }

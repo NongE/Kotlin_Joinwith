@@ -28,9 +28,9 @@ class SwaggerConfig {
     // api 에 대한 설명을 작성하는 곳
     private fun setApiInfo(): ApiInfo {
         return ApiInfoBuilder()
-            .title("api") // 제목
-            .version("1.0") // 버전
-            .description("Spring Boot를 활용한 회원가입 API 문서") // 요약
+            .title("Joinwith API Documentation") // 제목
+            .version("1.1") // 버전
+            .description("Kotlin과 Spring Boot를 활용한 회원가입(관리) API") // 요약
             .build()
     }
 

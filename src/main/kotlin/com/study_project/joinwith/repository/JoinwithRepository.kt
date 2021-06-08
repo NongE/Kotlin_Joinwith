@@ -8,8 +8,8 @@ import java.util.*
 
 interface JoinwithRepository: CrudRepository<Join, Long?>{
 
-    fun findJoinByUserId(userId: String): Optional<OverlapCheckDto>
+    fun findByUserId(userId: String): Optional<OverlapCheckDto>
 
-    fun findJoinByUserIdAndPw(userId: String, pw:String): Optional<ChangePasswordDto>
+    fun findByUserIdAndPw(userId: String, pw:String): Optional<ChangePasswordDto>
 
 }
