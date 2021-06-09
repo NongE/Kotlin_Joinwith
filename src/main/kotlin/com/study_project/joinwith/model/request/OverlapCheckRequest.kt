@@ -4,6 +4,4 @@ import io.swagger.annotations.ApiModelProperty
 
 data class OverlapCheckRequest(
     var userId:String
-){
-
-}
+)

@@ -7,4 +7,4 @@ data class ValidateUserRequest(
     var userId: String? = null,
     @ApiModelProperty(position = 0, example = "input_user_pw")
     var pw:String? = null
-){}
+)
